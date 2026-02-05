@@ -14,6 +14,7 @@ module com.example.smarttask_frontend {
     requires com.calendarfx.view;
     requires java.desktop;
     requires com.fasterxml.jackson.core;
+    requires net.bytebuddy;
 
     // ===== JavaFX Controllers (FXML reflection) =====
     opens com.example.smarttask_frontend.auth.controller to javafx.fxml;

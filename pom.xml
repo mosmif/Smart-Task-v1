@@ -53,6 +53,19 @@
             <version>2.10</version>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.websocket</groupId>
+            <artifactId>jakarta.websocket-api</artifactId>
+            <version>2.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-websocket</artifactId>
+            <version>10.1.18</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -67,12 +80,6 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat10-maven-plugin</artifactId>
-                <version>10.1.20</version>
             </plugin>
 
         </plugins>

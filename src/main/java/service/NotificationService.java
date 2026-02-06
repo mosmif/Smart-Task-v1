@@ -6,6 +6,11 @@ import model.Notification;
 import java.util.List;
 import java.util.Optional;
 
+
+import com.google.gson.Gson;
+
+import controller.NotificationWebSocket;
+
 public class NotificationService {
 
     private final NotificationDao notificationDao;
@@ -41,6 +46,12 @@ public class NotificationService {
         notification.setUserId(userId);
         notification.setMessage(message);
         notificationDao.save(notification);
+
+        try {
+            NotificationWebSocket.broadcastNotification("hello");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return notification;
     }
 

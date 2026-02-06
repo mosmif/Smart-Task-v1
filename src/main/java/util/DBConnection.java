@@ -9,7 +9,7 @@ public class DBConnection {
         "jdbc:mysql://localhost:3306/db_tasks?useSSL=false&serverTimezone=UTC";
 
     private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static final String PASSWORD = "lall";
 
     private DBConnection() {
         // prevent instantiation

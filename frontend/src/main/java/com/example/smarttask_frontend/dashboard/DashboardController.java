@@ -72,6 +72,17 @@ public class DashboardController implements Initializable {
         loadDashboardData();
         setupNotificationPanel();
         loadNotifications();
+
+        notificationService.setNotificationListener(notification -> {
+            // Ignore the 'notification' variable (it is null now)
+            // Just reload the data from the database
+            System.out.println("WebSocket signal received. Refreshing list...");
+            loadNotifications();
+            notificationListView.refresh();
+            updateNotificationBadge();
+        });
+        
+        notificationService.connectWebSocket();
     }
 
     private void setupTableColumns() {
@@ -140,7 +151,6 @@ public class DashboardController implements Initializable {
         });
     }
 
-    // ... [Rest of your Notification, Navigation, and Data Loading logic remains exactly the same] ...
 
     private void setupNotificationPanel() {
         notificationPanel.setTranslateX(400);
@@ -183,11 +193,14 @@ public class DashboardController implements Initializable {
         try {
             User user = UserSession.getUser();
             if (user != null) {
+                // 1. Fetch data
                 List<Notification> notificationList = notificationService.getNotificationsByUser(user.getId());
                 notifications = FXCollections.observableArrayList(notificationList);
                 notificationListView.setItems(notifications);
                 updateNotificationBadge();
-
+    
+                // 2. FORCE REBUILD: Set the CellFactory HERE every time data loads.
+                // This destroys old cells and creates fresh ones, avoiding the visual bug.
                 notificationListView.setCellFactory(lv -> new ListCell<Notification>() {
                     private final VBox container = new VBox(5);
                     private final HBox titleBox = new HBox(10);
@@ -196,18 +209,20 @@ public class DashboardController implements Initializable {
                     private final HBox actionBox = new HBox();
                     private final Button markAsReadBtn = new Button("Mark as read");
                     private final StackPane unreadIndicator = createUnreadIndicator();
-
+    
                     {
                         container.setStyle("-fx-padding: 10;");
                         titleLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 14px;");
                         timeLabel.setStyle("-fx-text-fill: #94a3b8; -fx-font-size: 12px;");
                         markAsReadBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #6366f1; -fx-font-size: 12px; -fx-padding: 2 5; -fx-cursor: hand;");
                         markAsReadBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, MouseEvent::consume);
+                        
+                        // Setup structure once
                         titleBox.getChildren().addAll(unreadIndicator, titleLabel);
                         actionBox.setAlignment(Pos.CENTER_RIGHT);
                         actionBox.getChildren().add(markAsReadBtn);
                     }
-
+    
                     @Override
                     protected void updateItem(Notification notification, boolean empty) {
                         super.updateItem(notification, empty);
@@ -217,26 +232,35 @@ public class DashboardController implements Initializable {
                             titleLabel.setText(notification.getMessage());
                             timeLabel.setText(notification.getFormattedTime());
                             container.getChildren().clear();
+    
                             if (!notification.isRead()) {
                                 unreadIndicator.setVisible(true);
                                 titleLabel.getStyleClass().add("unread-notification");
+                                // Ensure titleLabel is in titleBox (Simple reset)
+                                if (!titleBox.getChildren().contains(titleLabel)) {
+                                    titleBox.getChildren().add(titleLabel); 
+                                }
                                 container.getChildren().addAll(titleBox, timeLabel, actionBox);
                                 markAsReadBtn.setOnAction(e -> { e.consume(); markNotificationAsRead(notification); });
                             } else {
                                 unreadIndicator.setVisible(false);
                                 titleLabel.getStyleClass().remove("unread-notification");
-                                container.getChildren().addAll(titleLabel, timeLabel);
+                                // Even in read mode, keep the titleBox structure to avoid breaking the cell
+                                // Just hide the unread indicator effectively by logic above
+                                container.getChildren().addAll(titleBox, timeLabel);
                             }
                             setGraphic(container);
                         }
                     }
+                    
                     private StackPane createUnreadIndicator() {
                         StackPane indicator = new StackPane();
                         indicator.setStyle("-fx-background-color: #6366f1; -fx-min-width: 8; -fx-min-height: 8; -fx-max-width: 8; -fx-max-height: 8; -fx-background-radius: 4;");
                         return indicator;
                     }
                 });
-
+    
+                // Click listener
                 notificationListView.setOnMouseClicked(event -> {
                     Notification selected = notificationListView.getSelectionModel().getSelectedItem();
                     if (selected != null && !selected.isRead()) {
@@ -247,7 +271,6 @@ public class DashboardController implements Initializable {
             }
         } catch (Exception e) { e.printStackTrace(); }
     }
-
     private void markNotificationAsRead(Notification notification) {
         User user = UserSession.getUser();
         if (user != null) {

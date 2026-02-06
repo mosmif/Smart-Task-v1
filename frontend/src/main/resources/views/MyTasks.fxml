@@ -21,34 +21,35 @@
     </top>
 
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE">
+        <SplitPane dividerPositions="0.70">
 
-            <Tab text="My Tasks">
-                <VBox spacing="10">
-                    <padding>
-                        <Insets top="20" right="20" bottom="20" left="20"/>
-                    </padding>
+            <!-- LEFT SIDE: TABPANE -->
+            <TabPane tabClosingPolicy="UNAVAILABLE">
 
-                    <TableView fx:id="taskTable" VBox.vgrow="ALWAYS">
-                        <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                        </columnResizePolicy>
-                        <columns>
-                            <TableColumn fx:id="titleColumn" text="Task Name" prefWidth="200"/>
-                            <TableColumn fx:id="priorityColumn" text="Priority" prefWidth="100"/>
-                            <TableColumn fx:id="categoryColumn" text="Category" prefWidth="120"/>
-                            <TableColumn fx:id="dueDateColumn" text="Due Date" prefWidth="120"/>
-                            <TableColumn fx:id="statusColumn" text="Status" prefWidth="140"/>
-                            <TableColumn fx:id="subTasksColumn" text="" prefWidth="80" maxWidth="80" resizable="false"/>
-                            <TableColumn fx:id="shareColumn" text="" prefWidth="80" maxWidth="80" resizable="false"/>
-                        </columns>
-                    </TableView>
-                </VBox>
-            </Tab>
+                <Tab text="My Tasks">
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
 
-            <Tab text="Shared With Me">
-                <SplitPane dividerPositions="0.70" style="-fx-background-color: transparent; -fx-padding: 0;">
+                        <TableView fx:id="taskTable" VBox.vgrow="ALWAYS">
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                            </columnResizePolicy>
+                            <columns>
+                                <TableColumn fx:id="titleColumn" text="Task Name"/>
+                                <TableColumn fx:id="priorityColumn" text="Priority"/>
+                                <TableColumn fx:id="categoryColumn" text="Category"/>
+                                <TableColumn fx:id="dueDateColumn" text="Due Date"/>
+                                <TableColumn fx:id="statusColumn" text="Status"/>
+                                <TableColumn fx:id="subTasksColumn" text="" maxWidth="80"/>
+                                <TableColumn fx:id="shareColumn" text="" maxWidth="80"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
 
+                <Tab text="Shared With Me">
                     <VBox spacing="10">
                         <padding>
                             <Insets top="20" right="20" bottom="20" left="20"/>
@@ -59,47 +60,43 @@
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                             </columnResizePolicy>
                             <columns>
-                                <TableColumn fx:id="sharedTitleColumn" text="Task Name" prefWidth="200"/>
-                                <TableColumn fx:id="sharedPriorityColumn" text="Priority" prefWidth="100"/>
-                                <TableColumn fx:id="sharedCategoryColumn" text="Category" prefWidth="120"/>
-                                <TableColumn fx:id="sharedDueDateColumn" text="Due Date" prefWidth="120"/>
-                                <TableColumn fx:id="sharedStatusColumn" text="Status" prefWidth="140"/>
-                                <TableColumn fx:id="sharedSubTasksColumn" text="" prefWidth="80" maxWidth="80" resizable="false"/>
+                                <TableColumn fx:id="sharedTitleColumn" text="Task Name"/>
+                                <TableColumn fx:id="sharedPriorityColumn" text="Priority"/>
+                                <TableColumn fx:id="sharedCategoryColumn" text="Category"/>
+                                <TableColumn fx:id="sharedDueDateColumn" text="Due Date"/>
+                                <TableColumn fx:id="sharedStatusColumn" text="Status"/>
+                                <TableColumn fx:id="sharedSubTasksColumn" text=""/>
                             </columns>
                         </TableView>
                     </VBox>
+                </Tab>
 
-                    <VBox spacing="15" styleClass="comment-panel" fx:id="commentSidebar">
-                        <padding>
-                            <Insets top="20" right="20" bottom="20" left="20"/>
-                        </padding>
+            </TabPane>
 
-                        <Label text="Comments" styleClass="section-title"/>
+            <!-- RIGHT SIDE: ONE GLOBAL COMMENT SIDEBAR -->
+            <VBox spacing="15" styleClass="comment-panel">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
 
-                        <ListView fx:id="commentList" VBox.vgrow="ALWAYS"/>
+                <Label text="Comments" styleClass="section-title"/>
 
-                        <HBox spacing="10" alignment="CENTER">
+                <ListView fx:id="commentList" VBox.vgrow="ALWAYS"/>
 
-                            <!-- Attachment button -->
-                            <Button text="📎"
-                                    onAction="#attachFile"
-                                    styleClass="button attach-button"/>
+                <HBox spacing="10" alignment="CENTER">
+                    <Button text="📎" onAction="#attachFile" styleClass="button attach-button"/>
 
-                            <TextField fx:id="commentField"
-                                       HBox.hgrow="ALWAYS"
-                                       promptText="Write a comment..."/>
+                    <TextField fx:id="commentField"
+                               HBox.hgrow="ALWAYS"
+                               promptText="Write a comment..."/>
 
-                            <Button text="Send"
-                                    onAction="#sendComment"
-                                    styleClass="button"/>
+                    <Button text="Send"
+                            onAction="#sendComment"
+                            styleClass="button"/>
+                </HBox>
+            </VBox>
 
-                        </HBox>
-
-                    </VBox>
-
-                </SplitPane>
-            </Tab>
-
-        </TabPane>
+        </SplitPane>
     </center>
+
 </BorderPane>

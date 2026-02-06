@@ -44,7 +44,7 @@ public class LoginController {
                     getClass().getResource("/views/DashboardView.fxml")
             );
 
-            Scene scene = new Scene(loader.load(), 1200, 600);
+            Scene scene = new Scene(loader.load(), 1200, 700);
 
             // ✅ Get current stage from button
             Stage stage = (Stage) loginButton.getScene().getWindow();

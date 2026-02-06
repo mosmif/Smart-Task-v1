@@ -13,6 +13,8 @@ public class Task {
     private Priority priority;
     private String status;
     private List<SubTask> subTasks;
+    // who shared this task with me
+
 
     private LocalDateTime createdAt;
     private LocalDateTime dueDate;
@@ -104,4 +106,6 @@ public class Task {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
+
+
 }

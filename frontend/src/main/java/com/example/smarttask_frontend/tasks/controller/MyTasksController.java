@@ -41,6 +41,7 @@ public class MyTasksController implements Initializable {
     @FXML private TableColumn<Task, String> sharedDueDateColumn;
     @FXML private TableColumn<Task, String> sharedStatusColumn;
     @FXML private TableColumn<Task, Void>   sharedSubTasksColumn; // NEW
+    @FXML private TableColumn<Task, String> sharedByColumn;
 
     // --- Main Table Injectables ---
     @FXML private TableView<Task> taskTable;
@@ -268,13 +269,16 @@ public class MyTasksController implements Initializable {
 
     private void setupSelectionListeners() {
         taskTable.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
+            System.out.println("Main task clicked: " + n);
             if (n != null) {
                 sharedTasksTable.getSelectionModel().clearSelection();
                 selectedTask = n;
                 loadComments(n.getId());
             }
         });
+
         sharedTasksTable.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
+            System.out.println("Shared task clicked: " + n);
             if (n != null) {
                 taskTable.getSelectionModel().clearSelection();
                 selectedTask = n;
@@ -282,6 +286,7 @@ public class MyTasksController implements Initializable {
             }
         });
     }
+
 
     private void setupWebSocket() {
         ws = new LiveCommentClient(comment -> {
@@ -298,10 +303,17 @@ public class MyTasksController implements Initializable {
     // ... loadComments, sendComment, openSubtasksWindow, openShareTaskDialog, aiGenerate, etc. remain the same ...
 
     private void loadComments(Long taskId) {
+        System.out.println("Loading comments for task: " + taskId);
+
         commentList.getItems().clear();
-        commentList.getItems().addAll(commentService.getComments(taskId));
-        if(!commentList.getItems().isEmpty()) commentList.scrollTo(commentList.getItems().size() - 1);
+
+        List<Comment> comments = commentService.getComments(taskId);
+
+        System.out.println("Comments found: " + comments.size());
+
+        commentList.getItems().addAll(comments);
     }
+
 
     @FXML public void sendComment(ActionEvent e) {
         String text = commentField.getText();

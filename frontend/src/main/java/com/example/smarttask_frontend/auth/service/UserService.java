@@ -15,6 +15,7 @@ import java.util.List;
 public class UserService {
 
     private static final String LOGIN_URL = AppConfig.get("backend.base-url") + "user/login";
+    private static final String REGISTER_URL = AppConfig.get("backend.base-url") + "user/register";
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -49,6 +50,40 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+    public boolean register(String username, String email, String password) {
+        try {
+
+            // Create a temporary User object to serialize
+            // NOTE: Ensure your Frontend User entity has 'username', 'email', 'password' fields
+            User newUser = new User();
+            newUser.setUsername(username); // Map "Name" input to "username" field
+            newUser.setEmail(email);
+            newUser.setPassword(password);
+
+            String json = objectMapper.writeValueAsString(newUser);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(REGISTER_URL))
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // 200 OK means user returned. 201 Created is also possible depending on backend.
+            if (response.statusCode() == 200 || response.statusCode() == 201) {
+                return true;
+            } else {
+                System.err.println("Registration Failed: " + response.body());
+                return false;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

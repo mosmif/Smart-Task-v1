@@ -337,17 +337,32 @@ public class DashboardController implements Initializable {
         completedLabel.setText(String.valueOf(completed));
     }
 
-    @FXML private void logout() {
+    @FXML
+    private void logout() {
         try {
+            // 1️⃣ Clear the user session
             UserSession.clear();
-            for (Window window : List.copyOf(Window.getWindows())) window.hide();
+
+            // 2️⃣ Close all existing windows (optional, but safe)
+            for (Window window : List.copyOf(Window.getWindows())) {
+                window.hide();
+            }
+
+            // 3️⃣ Load LoginView in a NEW stage
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/LoginView.fxml"));
             Parent root = loader.load();
             Stage loginStage = new Stage();
-            loginStage.setTitle("Login");
-            loginStage.setScene(new Scene(root));
+            loginStage.setTitle("Smart Task Manager - Login");
+            loginStage.setScene(new Scene(root, 1200, 600));
             loginStage.show();
-        } catch (Exception e) { e.printStackTrace(); }
+
+            // 4️⃣ Optional: reset any stateful services if needed
+            // Example: if UserService had static cookies or tokens, reset them
+            // userService.reset();  // Add this if needed
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML private void showCalendar() {
